@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: sans-serif; /* Use a generic sans-serif font stack */
+}
+
+@layer base {
+  :root {
+    /* Neutral Grays & White Background (Light Theme - Unchanged) */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 15%; /* Dark Gray */
+    --card: 0 0% 98%; /* Light Gray */
+    --card-foreground: 0 0% 15%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 0% 15%;
+    --primary: 0 0% 20%; /* Medium Gray */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 94%; /* Slightly darker gray */
+    --secondary-foreground: 0 0% 15%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%; /* Lighter Gray for muted text */
+
+    /* Teal Accent (Light Theme - Unchanged) */
+    --accent: 180 100% 25%; /* Teal (#008080) */
+    --accent-foreground: 0 0% 98%; /* White text on accent */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 88%; /* Lighter border */
+    --input: 0 0% 92%; /* Input background */
+    --ring: 180 100% 25%; /* Teal for focus rings */
+    --chart-1: 180 76% 35%;
+    --chart-2: 180 58% 45%;
+    --chart-3: 180 47% 55%;
+    --chart-4: 180 34% 65%;
+    --chart-5: 180 27% 75%;
+    --radius: 0.5rem;
+
+    /* Sidebar theme (Light Theme - Unchanged) */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 15%;
+    --sidebar-primary: 180 100% 25%; /* Teal */
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 94%;
+    --sidebar-accent-foreground: 0 0% 15%;
+    --sidebar-border: 0 0% 88%;
+    --sidebar-ring: 180 100% 25%; /* Teal */
+  }
+
+  .dark {
+    /* Dark Blue Minimalist Theme */
+    --background: 220 40% 10%; /* Dark Navy */
+    --foreground: 210 20% 95%; /* Very Light Grayish Blue */
+    --card: 220 40% 15%; /* Slightly Lighter Dark Navy */
+    --card-foreground: 210 20% 95%;
+    --popover: 220 40% 15%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 210 90% 70%; /* Medium-Light Blue */
+    --primary-foreground: 220 40% 10%; /* Dark Navy (for text on primary) */
+    --secondary: 220 30% 25%; /* Dark Grayish Blue */
+    --secondary-foreground: 210 20% 90%; /* Light Grayish Blue */
+    --muted: 220 30% 25%;
+    --muted-foreground: 210 15% 65%; /* Mid Grayish Blue */
+
+    /* Accent Blue */
+    --accent: 200 100% 50%; /* Bright Cyan/Blue */
+    --accent-foreground: 210 20% 98%; /* Almost White */
+
+    --destructive: 0 70% 50%; /* Adjusted Destructive Red */
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 30% 30%; /* Dark Grayish Blue Border */
+    --input: 220 30% 20%; /* Darker Input Background */
+    --ring: 200 100% 50%; /* Accent Blue for focus rings */
+    --chart-1: 200 90% 60%;
+    --chart-2: 210 80% 55%;
+    --chart-3: 220 70% 50%;
+    --chart-4: 230 60% 45%;
+    --chart-5: 240 50% 40%;
+
+    /* Sidebar theme (Dark Blue) */
+    --sidebar-background: 220 40% 13%; /* Slightly different dark blue for sidebar */
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 200 100% 50%; /* Accent Blue */
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 30% 28%; /* Sidebar accent hover */
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 220 30% 30%;
+    --sidebar-ring: 200 100% 50%; /* Accent Blue */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Apply sans-serif font */
+    font-family: sans-serif;
+  }
+}
+
+/* Add subtle loading animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 1.5s linear infinite;
+}
