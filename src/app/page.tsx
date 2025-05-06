@@ -64,18 +64,23 @@ export default function Home() {
 
 
   const { toast } = useToast();
-  const speechSynthesis = typeof window !== 'undefined' ? window.speechSynthesis : null;
-  const utterance = typeof window !== 'undefined' ? new SpeechSynthesisUtterance() : null;
+  const speechSynthesisRef = React.useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
+  const utteranceRef = React.useRef(typeof window !== 'undefined' ? new SpeechSynthesisUtterance() : null);
+
 
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   useEffect(() => {
-    if (speechSynthesis) {
+    const speechSynthesis = speechSynthesisRef.current;
+    const utterance = utteranceRef.current;
+
+    if (speechSynthesis && utterance) {
       const loadVoices = () => {
         const availableVoices = speechSynthesis.getVoices();
         if (availableVoices.length > 0) {
           setVoices(availableVoices);
-          if (utterance && availableVoices.length > 0) {
+          // Set a default voice if not already set or if voices changed
+          if (utterance && (!utterance.voice || !availableVoices.includes(utterance.voice))) {
             let selectedVoice = availableVoices.find(voice => voice.localService && voice.lang.startsWith('en'));
             if (!selectedVoice) {
               selectedVoice = availableVoices.find(voice => voice.lang.startsWith('en'));
@@ -85,20 +90,30 @@ export default function Home() {
         }
       };
 
+      // Initial load
       loadVoices();
-      speechSynthesis.onvoiceschanged = loadVoices; 
+
+      // Listen for voices changed event
+      if ('onvoiceschanged' in speechSynthesis) {
+        speechSynthesis.addEventListener('voiceschanged', loadVoices);
+      }
 
       return () => {
-        speechSynthesis.onvoiceschanged = null;
+        if ('onvoiceschanged' in speechSynthesis) {
+          speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+        }
         if (speechSynthesis.speaking) {
           speechSynthesis.cancel();
         }
       };
     }
-  }, [speechSynthesis, utterance]);
+  }, []); // Removed speechSynthesis and utterance from dependencies as they are stable refs now
 
 
   const handleSpeak = useCallback(() => {
+    const speechSynthesis = speechSynthesisRef.current;
+    const utterance = utteranceRef.current;
+
     if (!speechSynthesis || !utterance) {
       toast({
         title: "Speech Error",
@@ -127,8 +142,13 @@ export default function Home() {
       setIsSpeaking(false);
     } else {
       utterance.text = textToSpeak;
+      // Ensure voice is set, especially if voices loaded after initial setup
       if (!utterance.voice && voices.length > 0) {
-        utterance.voice = voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+        let selectedVoice = voices.find(voice => voice.localService && voice.lang.startsWith('en'));
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+        }
+        utterance.voice = selectedVoice || voices[0];
       } else if (!utterance.voice && voices.length === 0) {
          toast({
            title: "Voice Error",
@@ -151,7 +171,7 @@ export default function Home() {
         setIsSpeaking(false);
       };
     }
-  }, [speechSynthesis, utterance, generatedText, summary, improvedTextState, activeTab, toast, voices]);
+  }, [generatedText, summary, improvedTextState, activeTab, toast, voices]);
 
 
   const handleGenerate = async () => {
@@ -468,7 +488,7 @@ export default function Home() {
                 {activeTab === 'improve' && 'Improved Text:'}
               </Label>
               {getOutputText() && (
-                <Button variant="ghost" size="icon" onClick={handleSpeak} disabled={!speechSynthesis || voices.length === 0 || isLoading} aria-label={isSpeaking ? "Stop speaking" : "Speak text"}>
+                <Button variant="ghost" size="icon" onClick={handleSpeak} disabled={!speechSynthesisRef.current || voices.length === 0 || isLoading} aria-label={isSpeaking ? "Stop speaking" : "Speak text"}>
                   {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                 </Button>
               )}
